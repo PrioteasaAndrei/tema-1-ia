@@ -188,7 +188,7 @@ class AStar:
 		pass
 
 	def solve(self,n_puzzle,h,verbose=False):
-		discovered = {tuple(n_puzzle.r): (None, 0)} ## closed
+		discovered = {n_puzzle: (None, 0)} ## closed
 		frontier = []
 		heappush(frontier, (0 + n_puzzle.evaluate_state(h), n_puzzle))
 		
@@ -209,7 +209,7 @@ class AStar:
 			(current_cost_f,node) = heappop(frontier)
 			if verbose:
 				print("Currently trying:",node.r)
-			current_g = discovered[tuple(node.r)][1]
+			current_g = discovered[node][1]
 
 			## or stop after certain number of steps
 			## node.r == node.solved().r
@@ -222,8 +222,8 @@ class AStar:
 			for neigh in node.get_neighbours():
 				neigh_g = current_g + 1
 				
-				if tuple(neigh.r) not in discovered or neigh_g < discovered[tuple(neigh.r)][1]:
-					discovered[tuple(neigh.r)] = (node, neigh_g)
+				if neigh not in discovered or neigh_g < discovered[neigh][1]:
+					discovered[neigh] = (node, neigh_g)
 					heappush(frontier, (neigh_g + n_puzzle.evaluate_state(h), neigh))
             
 
