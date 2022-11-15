@@ -112,7 +112,7 @@ class NPuzzle:
 	def num_inversions(board,N):
 		numInversions = 0
 		# print("N in inversion",N)
-		for i in range(N*N):
+		for i in range(N*N - 1):
 			for j in range(i+1,N*N):
 				if board[i] == " " or board[j] == " ":
 					continue
@@ -196,13 +196,13 @@ class AStar:
 
 		while frontier:
 
-			if len(discovered) == 100000 and n_puzzle.side == 4:
+			if len(discovered) >= 100000 and n_puzzle.side == 4:
 				found_solution = False
 				break
-			elif len(discovered) == 500000 and n_puzzle.side == 5:
+			elif len(discovered) >= 500000 and n_puzzle.side == 5:
 				found_solution = False
 				break
-			elif len(discovered) == 1000000 and n_puzzle.side == 6:
+			elif len(discovered) >= 1000000 and n_puzzle.side == 6:
 				found_solution = False
 				break
 
@@ -224,7 +224,7 @@ class AStar:
 				
 				if neigh not in discovered or neigh_g < discovered[neigh][1]:
 					discovered[neigh] = (node, neigh_g)
-					heappush(frontier, (neigh_g + n_puzzle.evaluate_state(h), neigh))
+					heappush(frontier, (neigh_g + neigh.evaluate_state(h), neigh))
             
 
 		if not found_solution:
@@ -237,45 +237,41 @@ class BeamSearch:
 	def __init__(self) -> None:
 		pass
 
-	def solve(self,n_puzzle,start,B,h,limit):
-		discovered = {tuple(n_puzzle.r): (None, 0)} ## closed
+	def solve(self,n_puzzle,B,h):
+		discovered = {n_puzzle: n_puzzle.evaluate_state(h)} ## closed
 		beam = []
-		heappush(beam, (n_puzzle.evaluate_state(h), n_puzzle))
+		## beam : score, node , parent
+		heappush(beam, (n_puzzle.evaluate_state(h), n_puzzle,None))
 		
 		found_solution = False
 
 		while beam:
 
-			if len(discovered) == 100000 and n_puzzle.side == 4:
+			if len(discovered) >= 100000 and n_puzzle.side == 4:
 				found_solution = False
 				break
-			elif len(discovered) == 500000 and n_puzzle.side == 5:
+			elif len(discovered) >= 500000 and n_puzzle.side == 5:
 				found_solution = False
 				break
-			elif len(discovered) == 1000000 and n_puzzle.side == 6:
+			elif len(discovered) >= 1000000 and n_puzzle.side == 6:
 				found_solution = False
-				break
-
-			(current_cost_f,node) = heappop(beam)
-			current_g = discovered[tuple(node.r)][1]
-
-			if node.r == node.solved().r:
-				print("FOUND A SOLUTION",current_g)
-				found_solution = True
 				break
 
 			all_neighbours = []
-			for score,node in beam:
+			for score,node,parent in beam:
 				for neigh in node.get_neighbours():
-					heappush(beam, (n_puzzle.evaluate_state(h), neigh))
+					heappush(beam, (neigh.evaluate_state(h), neigh,node))
+					if neigh.r == neigh.solved().r:
+						found_solution = True
+						break
 
-			for neigh in node.get_neighbours():
-				if tuple(neigh.r) not in discovered :
-					neigh_g = current_g + 1
-					## practic g e adancimea
-					discovered[tuple(neigh.r)] = (node, neigh_g)
-					heappush(beam, (n_puzzle.evaluate_state(h), neigh))
-            
+			selected = []
+			for i in range(B):
+				(score,node,parent) = heappop(beam)
+				heappush(selected,(score,node,parent))
+				discovered[node] = score
+
+			beam = selected        
 
 		if not found_solution:
 			print("Couldn't find solution")
