@@ -231,7 +231,7 @@ class AStar:
 			print("Couldn't find solution")
 
 
-## TODO: SEE why it is not working
+## TODO: Fix not working pt B = 1
 
 class BeamSearch:
 	
