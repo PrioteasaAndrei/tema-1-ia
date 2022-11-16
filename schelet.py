@@ -231,6 +231,7 @@ class AStar:
 			print("Couldn't find solution")
 
 
+## TODO: SEE why it is not working
 
 class BeamSearch:
 	
@@ -241,11 +242,12 @@ class BeamSearch:
 		discovered = {n_puzzle: n_puzzle.evaluate_state(h)} ## closed
 		beam = []
 		## beam : score, node , parent
-		heappush(beam, (n_puzzle.evaluate_state(h), n_puzzle,None))
+		heappush(beam, (n_puzzle.evaluate_state(h), n_puzzle, None))
 		
 		found_solution = False
 
 		while beam:
+			print("Discovered",len(discovered))
 
 			if len(discovered) >= 100000 and n_puzzle.side == 4:
 				found_solution = False
@@ -260,13 +262,14 @@ class BeamSearch:
 			all_neighbours = []
 			for score,node,parent in beam:
 				for neigh in node.get_neighbours():
-					heappush(beam, (neigh.evaluate_state(h), neigh,node))
-					if neigh.r == neigh.solved().r:
-						found_solution = True
-						break
+					if neigh not in discovered:
+						heappush(all_neighbours, (neigh.evaluate_state(h), neigh, node))
+						if neigh.r == neigh.solved().r:
+							found_solution = True
+							break
 
 			selected = []
-			for i in range(B):
+			for i in range(min(B,len(beam))):
 				(score,node,parent) = heappop(beam)
 				heappush(selected,(score,node,parent))
 				discovered[node] = score
