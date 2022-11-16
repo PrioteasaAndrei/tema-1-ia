@@ -239,15 +239,16 @@ class BeamSearch:
 		pass
 
 	def solve(self,n_puzzle,B,h):
-		discovered = {n_puzzle: n_puzzle.evaluate_state(h)} ## closed
+		discovered = {n_puzzle: (n_puzzle.evaluate_state(h),None)} ## closed
 		beam = []
 		## beam : score, node , parent
-		heappush(beam, (n_puzzle.evaluate_state(h), n_puzzle, None))
+		# heappush(beam, (n_puzzle.evaluate_state(h), n_puzzle, None))
+		beam += [(n_puzzle.evaluate_state(h), n_puzzle, None)]
 		
 		found_solution = False
+		depth = 0
 
 		while beam:
-			print("Discovered",len(discovered))
 
 			if len(discovered) >= 100000 and n_puzzle.side == 4:
 				found_solution = False
@@ -265,16 +266,26 @@ class BeamSearch:
 					if neigh not in discovered:
 						heappush(all_neighbours, (neigh.evaluate_state(h), neigh, node))
 						if neigh.r == neigh.solved().r:
+							# neigh.display()
 							found_solution = True
-							break
+							discovered[neigh] = (neigh.evaluate_state(h),node)
+							path_len = 0
+							cur_node = neigh
+							while cur_node:
+								path_len +=1
+								cur_node = discovered[cur_node][1]
+
+							print("Found solution")
+							return path_len
 
 			selected = []
-			for i in range(min(B,len(beam))):
-				(score,node,parent) = heappop(beam)
-				heappush(selected,(score,node,parent))
-				discovered[node] = score
+			for i in range(min(B,len(all_neighbours))):
+				(score,node,parent) = heappop(all_neighbours)
+				selected += [(score,node,parent)]
+				discovered[node] = (score,parent)
 
 			beam = selected        
 
 		if not found_solution:
 			print("Couldn't find solution")
+			return -1
