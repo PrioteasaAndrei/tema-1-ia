@@ -4,6 +4,7 @@ from copy import copy
 from builtins import isinstance
 # from resource import setrlimit, RLIMIT_AS, RLIMIT_DATA
 from heapq import heappop, heappush
+import sys
 
 class NPuzzle:
 	"""
@@ -125,7 +126,7 @@ class NPuzzle:
 	@staticmethod
 	def manhattan_and_num_inversions(board,N):
 		## posibil fara // 2
-		return NPuzzle.num_inversions(board,N) + NPuzzle.manhattan_distance(board,N)
+		return 2*NPuzzle.num_inversions(board,N) + NPuzzle.manhattan_distance(board,N)
 
 	def clone(self):
 		return NPuzzle(self.r, self.moves)
@@ -187,6 +188,11 @@ class AStar:
 	def __init__(self) -> None:
 		pass
 
+	def get_dict_memory(self,discovered):
+		size = sys.getsizeof(discovered)
+		size += sum(map(sys.getsizeof, discovered.values())) + sum(map(sys.getsizeof, discovered.keys()))
+		return size
+
 	def solve(self,n_puzzle,h,verbose=False):
 		discovered = {n_puzzle: (None, 0)} ## closed
 		frontier = []
@@ -217,7 +223,7 @@ class AStar:
 			if node.r == node.solved().r:
 				print("FOUND A SOLUTION",current_g)
 				found_solution = True
-				break
+				return current_g,len(discovered)
 
 			for neigh in node.get_neighbours():
 				neigh_g = current_g + 1
@@ -232,6 +238,7 @@ class AStar:
 
 
 ## TODO: Fix not working pt B = 1
+## TODO: vezi de ce ce aia goala
 
 class BeamSearch:
 	
@@ -242,7 +249,6 @@ class BeamSearch:
 		discovered = {n_puzzle: (n_puzzle.evaluate_state(h),None)} ## closed
 		beam = []
 		## beam : score, node , parent
-		# heappush(beam, (n_puzzle.evaluate_state(h), n_puzzle, None))
 		beam += [(n_puzzle.evaluate_state(h), n_puzzle, None)]
 		
 		found_solution = False
@@ -266,26 +272,28 @@ class BeamSearch:
 					if neigh not in discovered:
 						heappush(all_neighbours, (neigh.evaluate_state(h), neigh, node))
 						if neigh.r == neigh.solved().r:
-							# neigh.display()
+
+							print(n_puzzle.verify_solved(neigh.moves))
+
 							found_solution = True
 							discovered[neigh] = (neigh.evaluate_state(h),node)
-							path_len = 0
-							cur_node = neigh
-							while cur_node:
-								path_len +=1
-								cur_node = discovered[cur_node][1]
 
 							print("Found solution")
-							return path_len
+							return len(neigh.moves),len(discovered)
 
 			selected = []
+			if len(all_neighbours) == 0:
+				print('aaa')
+			
 			for i in range(min(B,len(all_neighbours))):
 				(score,node,parent) = heappop(all_neighbours)
+				print(score)
 				selected += [(score,node,parent)]
 				discovered[node] = (score,parent)
 
-			beam = selected        
+			beam = selected 
+
 
 		if not found_solution:
 			print("Couldn't find solution")
-			return -1
+			return -1,-1
