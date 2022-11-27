@@ -41,7 +41,13 @@ BLDS cu mhd:
 -6 easy toate
 -4 normal toate
 -5 normal toate
--6 normal toate
+ ## la problem 6 nu trece ultima cu b 100
+ ## la problem 6 nu trece niciuna cu b 10
+ ## la problem 6 nu trec ultimele 2 cu b 50
+ ## la problem 6 nu trece ultima de la 6 b 500
+
+
+
 ## Manhattan meu e bun
 
 ## euristica cealalta nu e buna
@@ -54,3 +60,20 @@ BLDS cu mhd:
 [14:44, 26.11.2022] Andu: Asa beam-ul incearca mai multe path-uri in acelasi timp
 [14:45, 26.11.2022] Andu: Dar da, la beam problema e ca nu se uita in fata mai mult
 [14:45, 26.11.2022] Andu: Si de la blds-ul da cel mai bine
+
+
+# TODO : pune si beam 500 la rulare algoritm beam search
+
+# TODO: arata ca functioneaza algoritmii dand niste teste
+
+
+
+
+
+
+
+
+###                     Towers of Hanoi
+
+
+Euristica : md sau #discuri plasate corect

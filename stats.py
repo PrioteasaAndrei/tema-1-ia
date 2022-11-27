@@ -709,7 +709,13 @@ def beam_vs_GLDS_bar_plot():
     plt.title("GLDS vs Beam search finished games")
     plt.show()
 
-def beam_vs_GLDS_box_plot(chose_problem_size,B=[1,10,50,100]):
+def beam_vs_GLDS_box_plot(chose_problem_size,B=[1,10,50,100],mode="GLDS"):
+    data_BLDS = {}
+
+    if mode != "GLDS":
+        ## pickle nu iti pastreaza tuplurile trebuie sa le iei tu cate 3
+        data_BLDS =np.load("BLDS_results.npy",allow_pickle='TRUE').item()
+
     no_states_4_easy_both_GLDS = list(np.load("glds/no_states_GLDS_both_4_easy.npy"))
     no_states_6_easy_both_GLDS = list(np.load("glds/no_states_GLDS_both_6_easy.npy"))
     no_states_4_both_GLDS = list(np.load("glds/no_states_GLDS_both_4.npy"))
@@ -732,37 +738,37 @@ def beam_vs_GLDS_box_plot(chose_problem_size,B=[1,10,50,100]):
 
     b = 100
 
-    no_steps_Beam_both_100_4_easy = no_steps_Beam_both[b][0]
-    no_steps_Beam_both_100_5_easy = no_steps_Beam_both[b][1]
-    no_steps_Beam_both_100_6_easy = no_steps_Beam_both[b][2]
-    no_steps_Beam_both_100_4_normal = no_steps_Beam_both[b][3]
+    # no_steps_Beam_both_100_4_easy = no_steps_Beam_both[b][0]
+    # no_steps_Beam_both_100_5_easy = no_steps_Beam_both[b][1]
+    # no_steps_Beam_both_100_6_easy = no_steps_Beam_both[b][2]
+    # no_steps_Beam_both_100_4_normal = no_steps_Beam_both[b][3]
 
-    no_states_Beam_both_100_4_easy = no_states_Beam_both[b][0]
-    no_states_Beam_both_100_5_easy = no_states_Beam_both[b][1]
-    no_states_Beam_both_100_6_easy = no_states_Beam_both[b][2]
-    no_states_Beam_both_100_4_normal = no_states_Beam_both[b][3]
+    # no_states_Beam_both_100_4_easy = no_states_Beam_both[b][0]
+    # no_states_Beam_both_100_5_easy = no_states_Beam_both[b][1]
+    # no_states_Beam_both_100_6_easy = no_states_Beam_both[b][2]
+    # no_states_Beam_both_100_4_normal = no_states_Beam_both[b][3]
 
-    time_Beam_both_100_4_easy = time_Beam_both[b][0]
-    time_Beam_both_100_5_easy = time_Beam_both[b][1]
-    time_Beam_both_100_6_easy = time_Beam_both[b][2]
-    time_Beam_both_100_4_normal = time_Beam_both[b][3]
+    # time_Beam_both_100_4_easy = time_Beam_both[b][0]
+    # time_Beam_both_100_5_easy = time_Beam_both[b][1]
+    # time_Beam_both_100_6_easy = time_Beam_both[b][2]
+    # time_Beam_both_100_4_normal = time_Beam_both[b][3]
 
 
 
-    no_steps_Beam_m_100_4_easy = no_steps_Beam_m[b][0]
-    no_steps_Beam_m_100_5_easy = no_steps_Beam_m[b][1]
-    no_steps_Beam_m_100_6_easy = no_steps_Beam_m[b][2]
-    no_steps_Beam_m_100_4_normal = no_steps_Beam_m[b][3]
+    # no_steps_Beam_m_100_4_easy = no_steps_Beam_m[b][0]
+    # no_steps_Beam_m_100_5_easy = no_steps_Beam_m[b][1]
+    # no_steps_Beam_m_100_6_easy = no_steps_Beam_m[b][2]
+    # no_steps_Beam_m_100_4_normal = no_steps_Beam_m[b][3]
 
-    no_states_Beam_m_100_4_easy = no_states_Beam_m[b][0]
-    no_states_Beam_m_100_5_easy = no_states_Beam_m[b][1]
-    no_states_Beam_m_100_6_easy = no_states_Beam_m[b][2]
-    no_states_Beam_m_100_4_normal = no_states_Beam_m[b][3]
+    # no_states_Beam_m_100_4_easy = no_states_Beam_m[b][0]
+    # no_states_Beam_m_100_5_easy = no_states_Beam_m[b][1]
+    # no_states_Beam_m_100_6_easy = no_states_Beam_m[b][2]
+    # no_states_Beam_m_100_4_normal = no_states_Beam_m[b][3]
 
-    time_Beam_m_100_4_easy = time_Beam_m[b][0]
-    time_Beam_m_100_5_easy = time_Beam_m[b][1]
-    time_Beam_m_100_6_easy = time_Beam_m[b][2]
-    time_Beam_m_100_4_normal = time_Beam_m[b][3]
+    # time_Beam_m_100_4_easy = time_Beam_m[b][0]
+    # time_Beam_m_100_5_easy = time_Beam_m[b][1]
+    # time_Beam_m_100_6_easy = time_Beam_m[b][2]
+    # time_Beam_m_100_4_normal = time_Beam_m[b][3]
 
 
     ## la GLDS a trebuit sa maresc spatiul de stari la 1 000 000 ca altfel nu intra niciun test in memorie
@@ -772,92 +778,192 @@ def beam_vs_GLDS_box_plot(chose_problem_size,B=[1,10,50,100]):
         ax = fig.add_subplot(111)
         ax.set_xlabel('Algorithms')
         ax.set_ylabel(string_y)
-        ax.set_title("Problem size:" + str(problem_size)  + "\nHeuristic: " + heuristic + "\n1-GLDS            2-Beam Search")
+        ax.set_title("Problem size:" + str(problem_size)  + "\nHeuristic: " + heuristic + "\n1-GLDS 2-Beam Search B = 10 3-Beam Search B = 50 4-Beam Search B = 100")
         bp = ax.boxplot(data)
         plt.show()
 
 
-
+    if mode == "GLDS":
     ## 0 adica not working python crashes
-    if chose_problem_size == 4:
-        data_4_easy_time_both = [time_4_easy_both_GLDS,time_Beam_both_100_4_easy]
+        if chose_problem_size == 4:
+            data_4_easy_time_both = [time_4_easy_both_GLDS,time_Beam_both[10][0],time_Beam_both[50][0],time_Beam_both[100][0]]
+            generate_plot(data_4_easy_time_both,'Time (s)',4,"Manhattan Distance + no. inversions")
+    
+            data_4_easy_steps_both = [no_steps_4_easy_both_GLDS,no_steps_Beam_both[10][0],no_steps_Beam_both[50][0],no_steps_Beam_both[100][0]]
+            generate_plot(data_4_easy_steps_both,'No steps',4,"Manhattan Distance + no. inversions")
+
+            data_4_easy_states_both = [no_states_4_easy_both_GLDS,no_states_Beam_both[10][0],no_states_Beam_both[50][0],no_states_Beam_both[100][0]]
+            generate_plot(data_4_easy_states_both,'No states',4,"Manhattan Distance + no. inversions")
+
+            data_4_easy_time_m = [[0 for i in range(5)],time_Beam_m[10][0],time_Beam_m[50][0],time_Beam_m[100][0]]
+            generate_plot(data_4_easy_time_m,'Time (s)',4,"Manhattan Distance")
+    
+            data_4_easy_steps_m = [[0 for i in range(5)],no_steps_Beam_m[10][0],no_steps_Beam_m[50][0],no_steps_Beam_m[100][0]]
+            generate_plot(data_4_easy_steps_m,'No steps',4,"Manhattan Distance")
+
+            data_4_easy_states_m = [[0 for i in range(5)],no_states_Beam_m[10][0],no_states_Beam_m[50][0],no_states_Beam_m[100][0]]
+            generate_plot(data_4_easy_states_m,'No states',4,"Manhattan Distance")
+        elif chose_problem_size == 5:
+
+            data_5_easy_time_both = [[0 for i in range(5)],time_Beam_both[10][1],time_Beam_both[50][1],time_Beam_both[100][1]]
+            generate_plot(data_5_easy_time_both,'Time (s)',5,"Manhattan Distance + no. inversions")
+
+            data_5_easy_steps_both = [[0 for i in range(5)],[x for x in no_steps_Beam_both[10][1] if x != -7],[x for x in no_steps_Beam_both[50][1] if x != -7],[x for x in no_steps_Beam_both[100][1] if x != -7]]
+            generate_plot(data_5_easy_steps_both,'No steps',5,"Manhattan Distance + no. inversions")
+
+            data_5_easy_states_both = [[0 for i in range(5)],no_states_Beam_both[10][1],no_states_Beam_both[50][1],no_states_Beam_both[100][1]]
+            generate_plot(data_5_easy_states_both,'No states',5,"Manhattan Distance + no. inversions")
+
+            data_5_easy_time_m = [[0 for i in range(5)],time_Beam_m[10][1],time_Beam_m[50][1],time_Beam_m[100][1]]
+            generate_plot(data_5_easy_time_m,'Time (s)',5,"Manhattan Distance")
+
+            data_5_easy_steps_m = [[0 for i in range(5)],[x for x in no_steps_Beam_m[10][1] if x != -7],[x for x in no_steps_Beam_m[50][1] if x != -7],[x for x in no_steps_Beam_m[100][1] if x != -7]]
+            generate_plot(data_5_easy_steps_m,'No steps',5,"Manhattan Distance")
+
+            data_5_easy_states_m = [[0 for i in range(5)],no_states_Beam_m[10][1],no_states_Beam_m[50][1],no_states_Beam_m[100][1]]
+            generate_plot(data_5_easy_states_m,'No states',5,"Manhattan Distance")
+
+        elif chose_problem_size == 6:
+            data_6_easy_time_both = [time_6_easy_both_GLDS,time_Beam_both[10][2],time_Beam_both[50][2],time_Beam_both[100][2]]
+            generate_plot(data_6_easy_time_both,'Time (s)',6,"Manhattan Distance + no. inversions")
+    
+            data_6_easy_steps_both = [no_steps_6_easy_both_GLDS,no_steps_Beam_both[10][2],no_steps_Beam_both[50][2],no_steps_Beam_both[100][2]]
+            generate_plot(data_6_easy_steps_both,'No steps',6,"Manhattan Distance + no. inversions")
+
+            data_6_easy_states_both = [no_states_6_easy_both_GLDS,no_states_Beam_both[10][2],no_states_Beam_both[50][2],no_states_Beam_both[100][2]]
+            generate_plot(data_6_easy_states_both,'No states',6,"Manhattan Distance + no. inversions")
+
+            data_6_easy_time_m = [[0 for i in range(5)],time_Beam_m[10][2],time_Beam_m[50][2],time_Beam_m[100][2]]
+            generate_plot(data_6_easy_time_m,'Time (s)',6,"Manhattan Distance")
+    
+            data_6_easy_steps_m = [[0 for i in range(5)],no_steps_Beam_m[10][2],no_steps_Beam_m[50][2],no_steps_Beam_m[100][2]]
+            generate_plot(data_6_easy_steps_m,'No steps',6,"Manhattan Distance")
+
+            data_6_easy_states_m = [[0 for i in range(5)],no_states_Beam_m[10][2],no_states_Beam_m[50][2],no_states_Beam_m[100][2]]
+            generate_plot(data_6_easy_states_m,'No states',6,"Manhattan Distance")
+        elif chose_problem_size == 7: ## 7 == 4-normal
+            
+            data_4_time_both = [time_4_both_GLDS,time_Beam_both[10][3],time_Beam_both[50][3],time_Beam_both[100][3]]
+            generate_plot(data_4_time_both,'Time (s)',4,"Manhattan Distance + no. inversions")
+    
+            data_4_steps_both = [no_steps_4_both_GLDS,no_steps_Beam_both[10][3],no_steps_Beam_both[50][3],no_steps_Beam_both[100][3]]
+            generate_plot(data_4_steps_both,'No steps',4,"Manhattan Distance + no. inversions")
+
+            data_4_states_both = [no_states_4_both_GLDS,no_states_Beam_both[10][3],no_states_Beam_both[50][3],no_states_Beam_both[100][3]]
+            generate_plot(data_4_states_both,'No states',4,"Manhattan Distance + no. inversions")
+
+            data_4_time_m = [[0 for i in range(5)],time_Beam_m[10][3],time_Beam_m[50][3],time_Beam_m[100][3]]
+            generate_plot(data_4_time_m,'Time (s)',4,"Manhattan Distance")
+    
+            data_4_steps_m = [[0 for i in range(5)],no_steps_Beam_m[10][3],no_steps_Beam_m[50][3],no_steps_Beam_m[100][3]]
+            generate_plot(data_4_steps_m,'No steps',4,"Manhattan Distance")
+
+            data_4_states_m = [[0 for i in range(5)],no_states_Beam_m[10][3],no_states_Beam_m[50][3],no_states_Beam_m[100][3]]
+            generate_plot(data_4_states_m,'No states',4,"Manhattan Distance")
+
+    else:
+        b = 100
+        tmp = data_BLDS[b]["4-easy"][0]
+        print(tmp)
+        blds_4_easy_time = [tmp[i] for i in range(len(tmp)) if (i + 1) % 3 == 0]
+        blds_4_easy_steps = [tmp[i] for i in range(len(tmp)) if i % 3 == 0]
+        blds_4_easy_state = [tmp[i] for i in range(len(tmp)) if (i + 2) % 3 == 0]
+        print(blds_4_easy_time)
+        print(blds_4_easy_state)
+        print(blds_4_easy_steps)
+
+        data_4_easy_time_both = [blds_4_easy_time,time_4_easy_both_GLDS,time_Beam_both[b][0]]
         generate_plot(data_4_easy_time_both,'Time (s)',4,"Manhattan Distance + no. inversions")
-   
-        data_4_easy_steps_both = [no_steps_4_easy_both_GLDS,no_steps_Beam_both_100_4_easy]
-        generate_plot(data_4_easy_steps_both,'No steps',4,"Manhattan Distance + no. inversions")
 
-        data_4_easy_states_both = [no_states_4_easy_both_GLDS,no_states_Beam_both_100_4_easy]
-        generate_plot(data_4_easy_states_both,'No states',4,"Manhattan Distance + no. inversions")
+        data_4_easy_state_both = [blds_4_easy_state,no_states_4_easy_both_GLDS,no_states_Beam_both[b][0]]
+        generate_plot(data_4_easy_state_both,'Number of states',4,"Manhattan Distance + no. inversions")
 
-        data_4_easy_time_m = [[0 for i in range(5)],time_Beam_m_100_4_easy]
-        generate_plot(data_4_easy_time_m,'Time (s)',4,"Manhattan Distance")
-   
-        data_4_easy_steps_m = [[0 for i in range(5)],no_steps_Beam_m_100_4_easy]
-        generate_plot(data_4_easy_steps_m,'No steps',4,"Manhattan Distance")
+        data_4_easy_steps_both = [blds_4_easy_steps,no_steps_4_easy_both_GLDS,no_steps_Beam_both[b][0]]
+        generate_plot(data_4_easy_steps_both,'Path len',4,"Manhattan Distance + no. inversions")
 
-        data_4_easy_states_m = [[0 for i in range(5)],no_states_Beam_m_100_4_easy]
-        generate_plot(data_4_easy_states_m,'No states',4,"Manhattan Distance")
-    elif chose_problem_size == 5:
+def create_stats_BLDS():
+    solver_BLDS = BLDS()
 
-        print(time_Beam_both_100_5_easy)
-        data_5_easy_time_both = [[0 for i in range(5)],time_Beam_both_100_5_easy]
-        generate_plot(data_5_easy_time_both,'Time (s)',5,"Manhattan Distance + no. inversions")
+    results = {}
+    results[10] = {}
+    results[50] = {}
+    results[100] = {}
+    results[500] = {}
 
-        data_5_easy_steps_both = [[0 for i in range(5)],[x for x in no_steps_Beam_both_100_5_easy if x != -7]]
-        generate_plot(data_5_easy_steps_both,'No steps',5,"Manhattan Distance + no. inversions")
+    def solve_with_time(solver,problem_set,heuristic,b,limit):
+        tbr = []
+        for p in problem_set:
+            start = time.time()
+            res = solver.solve(p,heuristic,b,limit)
+            end = time.time()
+            tbr += [res[0],res[1],end - start]
+        return tbr
 
-        data_5_easy_states_both = [[0 for i in range(5)],no_states_Beam_both_100_5_easy]
-        generate_plot(data_5_easy_states_both,'No states',5,"Manhattan Distance + no. inversions")
+    ## tuple in care primul element e lungimea caii si al doilea nr de stari folosite si ultimul timpul de rulare
 
-        data_5_easy_time_m = [[0 for i in range(5)],time_Beam_m_100_5_easy]
-        generate_plot(data_5_easy_time_m,'Time (s)',5,"Manhattan Distance")
+    for b in [10,50,100,500]:
+        res_4_easy_m = solve_with_time(solver_BLDS,problems_4_easy,NPuzzle.manhattan_distance,b,1000000)
+        res_5_easy_m = solve_with_time(solver_BLDS,problems_5_easy,NPuzzle.manhattan_distance,b,1000000)
+        res_6_easy_m = solve_with_time(solver_BLDS,problems_6_easy,NPuzzle.manhattan_distance,b,1000000)
 
-        data_5_easy_steps_m = [[0 for i in range(5)],[x for x in no_steps_Beam_m_100_5_easy if x != -7]]
-        generate_plot(data_5_easy_steps_m,'No steps',5,"Manhattan Distance")
+        res_4_m = solve_with_time(solver_BLDS,problems_4,NPuzzle.manhattan_distance,b,1000000)
+        res_5_m = solve_with_time(solver_BLDS,problems_5,NPuzzle.manhattan_distance,b,1000000)
 
-        data_5_easy_states_m = [[0 for i in range(5)],no_states_Beam_m_100_5_easy]
-        generate_plot(data_5_easy_states_m,'No states',5,"Manhattan Distance")
 
-    elif chose_problem_size == 6:
-        data_6_easy_time_both = [time_6_easy_both_GLDS,time_Beam_both_100_6_easy]
-        generate_plot(data_6_easy_time_both,'Time (s)',6,"Manhattan Distance + no. inversions")
-   
-        data_6_easy_steps_both = [no_steps_6_easy_both_GLDS,no_steps_Beam_both_100_6_easy]
-        generate_plot(data_6_easy_steps_both,'No steps',6,"Manhattan Distance + no. inversions")
+        if b == 10:
+            res_4_easy_both = solve_with_time(solver_BLDS,problems_4_easy[:3],NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_5_easy_both = solve_with_time(solver_BLDS,problems_5_easy[:2],NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_6_easy_both = solve_with_time(solver_BLDS,problems_6_easy,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_4_both = solve_with_time(solver_BLDS,problems_4,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_6_both = [(-1,-1,-1) for i in range(5)]
+            res_5_both = [(-1,-1,-1) for i in range(5)]
 
-        data_6_easy_states_both = [no_states_6_easy_both_GLDS,no_states_Beam_both_100_6_easy]
-        generate_plot(data_6_easy_states_both,'No states',6,"Manhattan Distance + no. inversions")
+            res_6_m = [(-1,-1,-1) for i in range(5)]            
+        elif b == 50:
+            res_4_easy_both = solve_with_time(solver_BLDS,problems_4_easy,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_5_easy_both = [(-1,-1,-1) for i in range(5)]
+            res_6_easy_both = solve_with_time(solver_BLDS,problems_6_easy[:3],NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_4_both = solve_with_time(solver_BLDS,problems_4,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_6_both = [(-1,-1,-1) for i in range(5)]
+            res_5_both = [(-1,-1,-1) for i in range(5)]
 
-        data_6_easy_time_m = [[0 for i in range(5)],time_Beam_m_100_6_easy]
-        generate_plot(data_6_easy_time_m,'Time (s)',6,"Manhattan Distance")
-   
-        data_6_easy_steps_m = [[0 for i in range(5)],no_steps_Beam_m_100_6_easy]
-        generate_plot(data_6_easy_steps_m,'No steps',6,"Manhattan Distance")
 
-        data_6_easy_states_m = [[0 for i in range(5)],no_states_Beam_m_100_6_easy]
-        generate_plot(data_6_easy_states_m,'No states',6,"Manhattan Distance")
-    elif chose_problem_size == 7: ## 7 == 4-normal
+            res_6_m = solve_with_time(solver_BLDS,problems_6[:3],NPuzzle.manhattan_distance,b,1000000)
         
-        data_4_time_both = [time_4_both_GLDS,time_Beam_both_100_4_normal]
-        generate_plot(data_4_time_both,'Time (s)',4,"Manhattan Distance + no. inversions")
-   
-        data_4_steps_both = [no_steps_4_both_GLDS,no_steps_Beam_both_100_4_normal]
-        generate_plot(data_4_steps_both,'No steps',4,"Manhattan Distance + no. inversions")
-
-        data_4_states_both = [no_states_4_both_GLDS,no_states_Beam_both_100_4_normal]
-        generate_plot(data_4_states_both,'No states',4,"Manhattan Distance + no. inversions")
-
-        data_4_time_m = [[0 for i in range(5)],time_Beam_m_100_4_normal]
-        generate_plot(data_4_time_m,'Time (s)',4,"Manhattan Distance")
-   
-        data_4_steps_m = [[0 for i in range(5)],no_steps_Beam_m_100_4_normal]
-        generate_plot(data_4_steps_m,'No steps',4,"Manhattan Distance")
-
-        data_4_states_m = [[0 for i in range(5)],no_states_Beam_m_100_4_normal]
-        generate_plot(data_4_states_m,'No states',4,"Manhattan Distance")
+        elif b == 100:
+            res_4_easy_both = solve_with_time(solver_BLDS,problems_4_easy,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_5_easy_both = [(-1,-1,-1) for i in range(5)]
+            res_6_easy_both = solve_with_time(solver_BLDS,problems_6_easy,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_4_both = solve_with_time(solver_BLDS,problems_4,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_6_both = [(-1,-1,-1) for i in range(5)]
+            res_5_both = [(-1,-1,-1) for i in range(5)]
 
 
+            res_6_m = solve_with_time(solver_BLDS,problems_6[:4],NPuzzle.manhattan_distance,b,1000000)
+        
+        elif b == 500:
+            res_4_easy_both = solve_with_time(solver_BLDS,problems_4_easy,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_5_easy_both = solve_with_time(solver_BLDS,problems_5_easy[:2],NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_6_easy_both = solve_with_time(solver_BLDS,problems_6_easy,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_4_both = solve_with_time(solver_BLDS,problems_4,NPuzzle.manhattan_and_num_inversions,b,1000000)
+            res_6_both = [(-1,-1,-1) for i in range(5)]
+            res_5_both = [(-1,-1,-1) for i in range(5)]
 
+
+            res_6_m = solve_with_time(solver_BLDS,problems_6[:4],NPuzzle.manhattan_distance,b,1000000)
+        
+
+        results[b]["4-easy"] = [res_4_easy_both,res_4_easy_m]
+        results[b]["5-easy"] = [res_5_easy_both,res_5_easy_m]
+        results[b]["6-easy"] = [res_6_easy_both,res_6_easy_m]
+
+        results[b]["4"] = [res_4_both,res_4_m]
+        results[b]["5"] = [res_5_both,res_5_m]
+        results[b]["6"] = [res_6_both,res_6_m]
+
+
+    np.save("BLDS_results",results)
+    return results
 
 
 
@@ -869,7 +975,10 @@ def main():
     # run_stats_GLDS()
     # interpret_stats_GLDS()
     # writer.save()
-    beam_vs_GLDS_box_plot(7)
+    # print(data_BLDS)
+    # data_BLDS = create_stats_BLDS()
+    # print(data_BLDS)
+    beam_vs_GLDS_box_plot(4,mode="BLDS")
 
 
 if __name__ == "__main__":

@@ -125,45 +125,6 @@ class NPuzzle:
 
 		return numInversions
 
-	# @staticmethod
-	# def line_conflict( i, line, dest):
-	# 	conflicts = 0
-	# 	conflict_graph = {}
-	# 	for j, u in enumerate(line):
-	# 		if u == 0:
-	# 			continue
-	# 		x, y = dest(u)
-	# 		if i != x:
-	# 			continue
-
-	# 		for k in range(j + 1, self.n):
-	# 			# opposing tile
-	# 			v = line[k]
-	# 			if v == 0:
-	# 				continue
-	# 			tx, ty = dest(v)
-	# 			if tx == x and ty <= y:
-	# 				u_degree, u_nbrs = conflict_graph.get(u) or (0, set())
-	# 				u_nbrs.add(v)
-	# 				conflict_graph[u] = (u_degree + 1, u_nbrs)
-	# 				v_degree, v_nbrs = conflict_graph.get(v) or (0, set())
-	# 				v_nbrs.add(u)
-	# 				conflict_graph[v] = (v_degree + 1, v_nbrs)
-	# 	while sum([v[0] for v in conflict_graph.values()]) > 0:
-	# 		popped = max(conflict_graph.keys(),key=lambda k: conflict_graph[k][0])
-	# 		for neighbour in conflict_graph[popped][1]:
-	# 			degree, vs = conflict_graph[neighbour]
-	# 			vs.remove(popped)
-	# 			conflict_graph[neighbour] = (degree - 1, vs)
-	# 			conflicts += 1
-	# 		conflict_graph.pop(popped)
-		
-	# 	return conflicts
-
-	# @staticmethod
-	# def row_dest(v):
-	# 	return )
-	
 	@staticmethod
 	def manhattan_and_num_inversions(board,N):
 		## posibil fara // 2
@@ -203,6 +164,110 @@ random.seed(4242)
 
 
 #########################################################################################################
+
+class HanoiTowers:
+
+	'''
+		discuri de marime 0,1,2,...n-1 n-1 fiind cel mai mare
+	'''
+	def __init__(self,no_disks,state) -> None:
+		self.no_disks = no_disks
+		self.r = state
+		self.goal = ['G' for i in range(no_disks)]
+		self.rods = ['P','Q','R','G']
+
+	'''
+		which = disk
+		where = rod
+	'''
+	def can_apply_move(self,which,where):
+		if self.r[which] == where:
+			return False
+		
+		for i in range(self.no_disks):
+			if i < which:
+				cond1 = self.r[i] != self.r[which]
+				cond2 = self.r[i] != where
+
+				if (cond1 and cond2) == False:
+					return False
+		
+		return True
+
+	
+	def clone(self):
+		return HanoiTowers(self.no_disks,self.r)
+
+	def display(self):
+		for disk,rod in enumerate(self.r):
+			print("Rod: ",rod, " Disk: ",disk)
+		print("\n")
+
+	def move_in_place(self,which,where):
+		if self.can_apply_move(which,where) == False:
+			print("ERROR in move in place")
+			return None
+
+		new_state = [-1 for i in range(self.no_disks)]
+		for i in range(self.no_disks):
+			if i == which:
+				new_state[i] = where
+			else:
+				new_state[i] = self.r[i]
+
+		
+		## safety check
+		for i in range(self.no_disks):
+			if new_state[i] == -1:
+				print("ERROR in new state")
+				return None
+
+		self.r = new_state
+		return self
+
+	def move(self,which,where):
+		return self.clone().move_in_place(which,where)
+
+	def get_neighbours(self):
+		tbr = []
+		for disk in range(self.no_disks):
+			for rod in self.rods:
+				if self.can_apply_move(disk,rod) == True:
+					tbr += [self.move(disk,rod)]
+
+		return tbr
+
+	def evaluate_state(self,heuristic):
+		return heuristic(self)
+
+	def solved(self):
+		tbr = self.clone()
+		tbr.r = tbr.goal
+		return tbr
+
+	'''
+	numarul de discuri care sunt la locul lor
+	'''
+	@staticmethod
+	def heuristic1(game):
+		return game.r.count('G')
+	
+	@staticmethod
+	def heuristic2(game):
+		a = game.r.count('G')
+		return game.no_disks - a
+
+	def __hash__(self):
+		return hash(tuple(self.r))	
+
+	def __eq__(self, other):
+		return self.r == other.r
+	def __lt__(self, other):
+		return True
+		
+
+#########################################################################################################
+
 
 '''
 0 inseamna vecinul de sus
@@ -455,7 +520,7 @@ class GLDS:
 
 
 
-## TODO: vezi sa aduni bine numarul de stari si de pasi
+## TODO: vezi sa aduni bine numarul de stari 
 class BLDS:
 
 	def __init__(self) -> None:
@@ -534,11 +599,12 @@ class BLDS:
 			no_states = 0
 			while already_explored < len(succ):
 
-				if time.time() - start_time > 40:
+				if time.time() - start_time > 100:
 					return "MEM | TLE"
 
 				## aici e bine
 				n = min(len(succ) - already_explored,B)
+				## AICI SUNT INVERS DAR DE CE MERGE???
 				nivel_urm = nsmallest(succ,already_explored + n)[n:]
 
 				for score,node,parent in nivel_urm:
